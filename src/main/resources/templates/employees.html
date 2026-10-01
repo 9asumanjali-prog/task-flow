@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TaskFlow - Employees</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6fb;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: 240px;
+            height: 100vh;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px 20px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .menu li:hover,
+        .active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .main {
+            margin-left: 240px;
+            padding: 35px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+        }
+
+        .profile {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+        }
+
+        .employee-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .employee-box h2 {
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #667eea;
+        }
+
+        .btn {
+            grid-column: span 2;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #5568d9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f7f8fc;
+            color: #555;
+        }
+
+        .delete-btn {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: #e63939;
+        }
+
+        @media (max-width: 900px) {
+            .form {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        📋 TaskFlow
+    </div>
+
+    <ul class="menu">
+
+        <li onclick="location.href='/dashboard'">
+            🏠 Dashboard
+        </li>
+
+        <li class="active">
+            👨‍💼 Employees
+        </li>
+
+        <li onclick="location.href='/tasks'">
+            📋 Tasks
+        </li>
+
+        <li onclick="location.href='/reports'">
+            📊 Reports
+        </li>
+
+        <li onclick="location.href='/settings'">
+            ⚙️ Settings
+        </li>
+
+    </ul>
+
+</div>
+
+<div class="main">
+
+    <div class="header">
+        <h1>Employees</h1>
+        <div class="profile">👤 Admin</div>
+    </div>
+
+    <div class="employee-box">
+
+        <h2>Add Employee</h2>
+
+        <div class="form">
+
+            <input type="text" id="name" placeholder="Employee Name">
+
+            <input type="email" id="email" placeholder="Email">
+
+            <input type="text" id="department" placeholder="Department">
+
+            <input type="text" id="position" placeholder="Position">
+
+            <button class="btn" onclick="addEmployee()">
+                + Add Employee
+            </button>
+
+        </div>
+
+        <h2>Employee List</h2>
+
+        <table>
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Position</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+
+            <tbody id="employeeTable">
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+    async function loadEmployees() {
+
+        const response = await fetch('/api/employees');
+
+        const employees = await response.json();
+
+        const table = document.getElementById("employeeTable");
+
+        table.innerHTML = "";
+
+        employees.forEach(employee => {
+
+            table.innerHTML += `
+                <tr>
+                    <td>${employee.id}</td>
+                    <td>${employee.name}</td>
+                    <td>${employee.email}</td>
+                    <td>${employee.department}</td>
+                    <td>${employee.position}</td>
+                    <td>
+                        <button class="delete-btn"
+                                onclick="deleteEmployee(${employee.id})">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+        });
+    }
+
+
+    async function addEmployee() {
+
+        const employee = {
+
+            name: document.getElementById("name").value,
+
+            email: document.getElementById("email").value,
+
+            department: document.getElementById("department").value,
+
+            position: document.getElementById("position").value
+
+        };
+
+        await fetch('/api/employees', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify(employee)
+
+        });
+
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("department").value = "";
+        document.getElementById("position").value = "";
+
+        loadEmployees();
+    }
+
+
+    async function deleteEmployee(id) {
+
+        await fetch('/api/employees/' + id, {
+
+            method: 'DELETE'
+
+        });
+
+        loadEmployees();
+    }
+
+
+    loadEmployees();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TaskFlow - Reports</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6fb;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: 240px;
+            height: 100vh;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px 20px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .menu li:hover,
+        .active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .main {
+            margin-left: 240px;
+            padding: 35px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+        }
+
+        .profile {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .number {
+            font-size: 35px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .report-box {
+            background: white;
+            margin-top: 25px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .report-box h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        📋 TaskFlow
+    </div>
+
+    <ul class="menu">
+
+        <li onclick="location.href='/dashboard'">
+            🏠 Dashboard
+        </li>
+
+        <li onclick="location.href='/employees'">
+            👨‍💼 Employees
+        </li>
+
+        <li onclick="location.href='/tasks'">
+            📋 Tasks
+        </li>
+
+        <li class="active">
+            📊 Reports
+        </li>
+        <li onclick="location.href='/settings'">
+            ⚙️ Settings
+        </li>
+
+    </ul>
+
+</div>
+
+
+<div class="main">
+
+    <div class="header">
+
+        <h1>Reports</h1>
+
+        <div class="profile">
+            👤 Admin
+        </div>
+
+    </div>
+
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>Total Employees</h3>
+            <div class="number" id="employeeCount">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Total Tasks</h3>
+            <div class="number" id="taskCount">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Completed Tasks</h3>
+            <div class="number" id="completedCount">0</div>
+        </div>
+
+    </div>
+
+
+    <div class="report-box">
+
+        <h2>Task Summary</h2>
+
+        <p>
+            Pending Tasks:
+            <strong id="pendingCount">0</strong>
+        </p>
+
+        <br>
+
+        <p>
+            In Progress Tasks:
+            <strong id="progressCount">0</strong>
+        </p>
+
+        <br>
+
+        <p>
+            Completed Tasks:
+            <strong id="completedCount2">0</strong>
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    async function loadReports() {
+
+        const employeeResponse =
+            await fetch('/api/employees');
+
+        const employees =
+            await employeeResponse.json();
+
+        const taskResponse =
+            await fetch('/api/tasks');
+
+        const tasks =
+            await taskResponse.json();
+
+
+        document.getElementById("employeeCount")
+            .textContent = employees.length;
+
+        document.getElementById("taskCount")
+            .textContent = tasks.length;
+
+
+        let pending = 0;
+        let progress = 0;
+        let completed = 0;
+
+
+        tasks.forEach(task => {
+
+            const status =
+                task.status
+                    ? task.status.toLowerCase()
+                    : "";
+
+            if (status === "pending") {
+                pending++;
+            }
+
+            if (status === "in progress") {
+                progress++;
+            }
+
+            if (status === "completed") {
+                completed++;
+            }
+
+        });
+
+
+        document.getElementById("pendingCount")
+            .textContent = pending;
+
+        document.getElementById("progressCount")
+            .textContent = progress;
+
+        document.getElementById("completedCount")
+            .textContent = completed;
+
+        document.getElementById("completedCount2")
+            .textContent = completed;
+
+    }
+
+
+    loadReports();
+
+</script>
+
+</body>
+</html>

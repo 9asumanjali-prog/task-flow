@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TaskFlow - Tasks</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6fb;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: 240px;
+            height: 100vh;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px 20px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .menu li:hover,
+        .active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .main {
+            margin-left: 240px;
+            padding: 35px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+        }
+
+        .profile {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+        }
+
+        .task-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .task-box h2 {
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #667eea;
+        }
+
+        .full {
+            grid-column: span 2;
+        }
+
+        .btn {
+            grid-column: span 2;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #5568d9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f7f8fc;
+            color: #555;
+        }
+
+        .delete-btn {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: #e63939;
+        }
+
+        @media (max-width: 900px) {
+            .form {
+                grid-template-columns: 1fr;
+            }
+
+            .full,
+            .btn {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        📋 TaskFlow
+    </div>
+
+    <ul class="menu">
+
+        <li onclick="location.href='/dashboard'">
+            🏠 Dashboard
+        </li>
+
+        <li onclick="location.href='/employees'">
+            👨‍💼 Employees
+        </li>
+
+        <li class="active">
+            📋 Tasks
+        </li>
+
+        <li onclick="location.href='/reports'">
+            📊 Reports
+        </li>
+
+        <li onclick="location.href='/settings'">
+            ⚙️ Settings
+        </li>
+
+    </ul>
+
+
+</div>
+
+
+<div class="main">
+
+    <div class="header">
+
+        <h1>Tasks</h1>
+
+        <div class="profile">
+            👤 Admin
+        </div>
+
+    </div>
+
+
+    <div class="task-box">
+
+        <h2>Add Task</h2>
+
+        <div class="form">
+
+            <input
+                    type="text"
+                    id="title"
+                    placeholder="Task Title">
+
+            <input
+                    type="text"
+                    id="employeeId"
+                    placeholder="Employee ID">
+
+            <textarea
+                    id="description"
+                    class="full"
+                    placeholder="Task Description"></textarea>
+
+            <select id="priority">
+
+                <option value="">Select Priority</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+
+            </select>
+
+            <select id="status">
+
+                <option value="">Select Status</option>
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+
+            </select>
+
+            <input
+                    type="date"
+                    id="deadline">
+
+            <button
+                    class="btn"
+                    onclick="addTask()">
+
+                + Add Task
+
+            </button>
+
+        </div>
+
+
+        <h2>Task List</h2>
+
+        <table>
+
+            <thead>
+
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Deadline</th>
+                <th>Employee ID</th>
+                <th>Action</th>
+            </tr>
+
+            </thead>
+
+            <tbody id="taskTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    async function loadTasks() {
+
+        const response = await fetch('/api/tasks');
+
+        const tasks = await response.json();
+
+        const table = document.getElementById("taskTable");
+
+        table.innerHTML = "";
+
+        tasks.forEach(task => {
+
+            table.innerHTML += `
+
+                <tr>
+
+                    <td>${task.id}</td>
+
+                    <td>${task.title}</td>
+
+                    <td>${task.priority}</td>
+
+                    <td>${task.status}</td>
+
+                    <td>${task.deadline}</td>
+
+                    <td>${task.employeeId}</td>
+
+                    <td>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteTask(${task.id})">
+
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+    }
+
+
+    async function addTask() {
+
+        const task = {
+
+            title: document.getElementById("title").value,
+
+            description: document.getElementById("description").value,
+
+            priority: document.getElementById("priority").value,
+
+            status: document.getElementById("status").value,
+
+            deadline: document.getElementById("deadline").value,
+
+            employeeId: Number(
+                document.getElementById("employeeId").value
+            )
+
+        };
+
+
+        await fetch('/api/tasks', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify(task)
+
+        });
+
+
+        document.getElementById("title").value = "";
+        document.getElementById("description").value = "";
+        document.getElementById("priority").value = "";
+        document.getElementById("status").value = "";
+        document.getElementById("deadline").value = "";
+        document.getElementById("employeeId").value = "";
+
+        loadTasks();
+    }
+
+
+    async function deleteTask(id) {
+
+        await fetch('/api/tasks/' + id, {
+
+            method: 'DELETE'
+
+        });
+
+        loadTasks();
+    }
+
+
+    loadTasks();
+
+</script>
+
+</body>
+</html>

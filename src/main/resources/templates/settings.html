@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TaskFlow - Settings</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6fb;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: 240px;
+            height: 100vh;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px 20px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .menu li:hover,
+        .active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .main {
+            margin-left: 240px;
+            padding: 35px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+        }
+
+        .profile {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+        }
+
+        .settings-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            max-width: 700px;
+        }
+
+        .settings-box h2 {
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .setting {
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .setting:last-child {
+            border-bottom: none;
+        }
+
+        .setting h3 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .setting p {
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        input {
+            padding: 12px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .btn {
+            margin-top: 10px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #5568d9;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        📋 TaskFlow
+    </div>
+
+    <ul class="menu">
+
+        <li onclick="location.href='/dashboard'">
+            🏠 Dashboard
+        </li>
+
+        <li onclick="location.href='/employees'">
+            👨‍💼 Employees
+        </li>
+
+        <li onclick="location.href='/tasks'">
+            📋 Tasks
+        </li>
+
+        <li onclick="location.href='/reports'">
+            📊 Reports
+        </li>
+
+        <li class="active">
+            ⚙️ Settings
+        </li>
+
+    </ul>
+
+</div>
+
+
+<div class="main">
+
+    <div class="header">
+
+        <h1>Settings</h1>
+
+        <div class="profile">
+            👤 Admin
+        </div>
+
+    </div>
+
+
+    <div class="settings-box">
+
+        <h2>System Settings</h2>
+
+
+        <div class="setting">
+
+            <h3>Admin Name</h3>
+
+            <p>Change the administrator name.</p>
+
+            <input
+                    type="text"
+                    id="adminName"
+                    value="Admin">
+
+            <button
+                    class="btn"
+                    onclick="saveSettings()">
+
+                Save
+
+            </button>
+
+        </div>
+
+
+        <div class="setting">
+
+            <h3>Application</h3>
+
+            <p>TaskFlow Employee Task Management System</p>
+
+        </div>
+
+
+        <div class="setting">
+
+            <h3>Version</h3>
+
+            <p>TaskFlow v1.0</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function saveSettings() {
+
+        const name =
+            document.getElementById("adminName").value;
+
+        localStorage.setItem("adminName", name);
+
+        alert("Settings saved successfully!");
+
+        document.querySelector(".profile").innerHTML =
+            "👤 " + name;
+    }
+
+
+    window.onload = function() {
+
+        const savedName =
+            localStorage.getItem("adminName");
+
+        if (savedName) {
+
+            document.getElementById("adminName").value =
+                savedName;
+
+            document.querySelector(".profile").innerHTML =
+                "👤 " + savedName;
+        }
+    };
+
+</script>
+
+</body>
+</html>

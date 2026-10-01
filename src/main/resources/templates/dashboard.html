@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TaskFlow Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6fb;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: 240px;
+            height: 100vh;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px 20px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .menu li:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .main {
+            margin-left: 240px;
+            padding: 35px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+        }
+
+        .profile {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .welcome {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        📋 TaskFlow
+    </div>
+
+    <ul class="menu">
+
+        <li>🏠 Dashboard</li>
+
+        <li onclick="location.href='/employees'">
+            👨‍💼 Employees
+        </li>
+
+        <li onclick="location.href='/tasks'">
+            📋 Tasks
+        </li>
+
+        <li onclick="location.href='/reports'">
+            📊 Reports
+        </li>
+
+        <li onclick="location.href='/settings'">
+            ⚙️ Settings
+        </li>
+
+    </ul>
+
+</div>
+
+<div class="main">
+
+    <div class="header">
+        <h1>Dashboard</h1>
+
+        <div class="profile">
+            👤 Admin
+            <button
+                    onclick="location.href='/'"
+                    style="margin-left:15px; padding:8px 12px;
+               border:none; border-radius:6px;
+               background:#667eea; color:white;
+               cursor:pointer;">
+                Logout
+            </button>
+        </div>
+    </div>
+    <div style="display:flex; gap:15px; margin-bottom:30px;">
+
+        <button
+                onclick="location.href='/employees'"
+                style="padding:14px 25px; border:none; border-radius:10px;
+               background:#667eea; color:white; cursor:pointer;">
+            👨‍💼 Manage Employees
+        </button>
+
+        <button
+                onclick="location.href='/tasks'"
+                style="padding:14px 25px; border:none; border-radius:10px;
+               background:#764ba2; color:white; cursor:pointer;">
+            📋 Manage Tasks
+        </button>
+
+    </div>
+
+    <div class="welcome">
+        <h2>Welcome to TaskFlow 👋</h2>
+        <p>Manage your employees and tasks from one place.</p>
+    </div>
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>Total Employees</h3>
+            <div class="number" id="employeeCount">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Total Tasks</h3>
+            <div class="number" id="taskCount">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Pending Tasks</h3>
+            <div class="number" id="pendingCount">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Completed Tasks</h3>
+            <div class="number" id="completedCount">0</div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+    async function loadDashboard() {
+        try {
+            const employeesResponse = await fetch('/api/employees');
+            const employees = await employeesResponse.json();
+
+            const tasksResponse = await fetch('/api/tasks');
+            const tasks = await tasksResponse.json();
+
+            document.getElementById("employeeCount").textContent = employees.length;
+            document.getElementById("taskCount").textContent = tasks.length;
+
+            let pending = 0;
+            let completed = 0;
+
+            tasks.forEach(task => {
+                if (task.status &&
+                    task.status.toLowerCase() === "pending") {
+                    pending++;
+                }
+
+                if (task.status &&
+                    task.status.toLowerCase() === "completed") {
+                    completed++;
+                }
+            });
+
+            document.getElementById("pendingCount").textContent = pending;
+            document.getElementById("completedCount").textContent = completed;
+
+        } catch (error) {
+            console.log("Error loading dashboard:", error);
+        }
+    }
+
+    loadDashboard();
+</script>
+</body>
+</html>
